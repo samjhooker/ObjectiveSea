@@ -42,6 +42,7 @@ function loadControls(){
 function loadInfoScreen(){
     var rand = insults[Math.floor(Math.random() * insults.length)];
     $("#infoScreenText").html(rand);
+    $("#controls").fadeOut(1000);
     $("#infoScreen").fadeIn(1000);
 }
 
