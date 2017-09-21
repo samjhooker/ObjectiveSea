@@ -60,5 +60,5 @@ function changeColor(color){
 let socket = new WebSocket("ws://132.181.13.96:2828", "checking Life Works");
 
 socket.onopen = function (event) {
-  socket.sendBytes("hello");
+  socket.sendBytes("helloo");
 };
