@@ -49,6 +49,8 @@ function changeColor(color){
     $("#controlsPage").css("background-color", color);
     $(".directionArrow").css("color", color);
     $("#infoScreen").css("background-color", color);
+    $("body").css("background-color", color);
+
 
 
 }
