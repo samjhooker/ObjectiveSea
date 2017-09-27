@@ -1,34 +1,62 @@
-
-
-// $(document).ready(function(){
-//     $( "#codeEntryForm" ).on( "c", loadControls());
-//
-// });
-
 var insults = ["probably never play this game again.", "No one has ever sailed as badly as you just did.", "you suck.", "rookie.",
     "better luck next time. Not that any of your friends will let you sail with them again.", "you died.", "Shutting down device"]
 
-function submitButtonPressed(){
-
-  //TODO: authenitifaction and game connection logic goes here
-
-    if(true){
-        initControls("Emerites Team New Zealand");
-        changeColor("skyblue");
-        loadControls();
-    }
-
+let BOAT_ACTION = {
+    VMG: {value:1},
+    SAILS : {value:2},
+    TACK_GYBE : {value:4},
+    CLOCKWISE : {value:7},
+    ANTI_CLOCKWISE : {value:8},
 }
 
-function updateStats(speed, placing, health){
+/**
+ * Upon button press, sends a request game packet and changes the screen to control screen.
+ */
+function submitButtonPressed(){
+    requestGame($("#codeBox").val());
+    initButtonListeners();
+}
+
+function showWrongGameCodeMessage() {
+    $("#errorMessage").fadeIn(1000);
+}
+
+/**
+ * Initialises boat control buttons on website
+ * Upwind, downwind have actions for holding down
+ */
+function initButtonListeners(){
+    var timeout;
+    $(".boatActionPress, .boatActionHold").click(function (event) {
+        let name = $("#"+event.target.id).attr('name');
+        createBoatActionMessage(name);
+    })
+    $(".boatActionHold").mousedown(function (event) {
+        timeout = setInterval(function(){
+            let name = $("#"+event.target.id).attr('name');
+            createBoatActionMessage(name);
+        }, 100);
+    })
+    $(".boatActionHold").mouseup(function(){
+        clearInterval(timeout);
+        return false;
+    });
+    $('.boatActionHold').mouseout(function () {
+        clearInterval(timeout);
+        return false;
+    });
+}
+
+function updateStats(speed, placing, totalCompetitors, health){
     console.log("updating");
     $("#boatSpeed").html(speed+"kn");
-    $("#placing").html(placing);
+    $("#placing").html(placing + " / " + totalCompetitors);
     $("#boatHealth").html(health+"%");
 }
 
-function initControls(teamName){
+function initControls(teamName, color){
     $("#boatNameText").html(teamName);
+    changeColor(color);
     $("#boatSpeed").html("0kn");
     $("#placing").html("-");
     $("#boatHealth").html("100%");
@@ -51,14 +79,32 @@ function changeColor(color){
     $(".directionArrow").css("color", color);
     $("#infoScreen").css("background-color", color);
     $("body").css("background-color", color);
-
-
-
 }
 
-
-let socket = new WebSocket("ws://132.181.13.96:2828", "checking Life Works");
-
-socket.onopen = function (event) {
-  socket.sendBytes("helloo");
+/**
+ * Checks code of button pressed, sends corresponding boat action message
+ * @param name
+ */
+function createBoatActionMessage(name){
+    console.log(name);
+    switch(name){
+        case "vmg":
+            sendBoatActionMessage(BOAT_ACTION.VMG.value, myId);
+            break;
+        case "sails":
+            sendBoatActionMessage(BOAT_ACTION.SAILS.value, myId);
+            break;
+        case "tackGybe":
+            sendBoatActionMessage(BOAT_ACTION.TACK_GYBE.value, myId);
+            break;
+        case "upwind":
+            sendBoatActionMessage(BOAT_ACTION.ANTI_CLOCKWISE.value, myId);
+            break;
+        case "downwind":
+            sendBoatActionMessage(BOAT_ACTION.CLOCKWISE.value, myId);
+            break;
+        default:
+            console.log("Unknown Button Pressed");
+            break;
+    }
 };
