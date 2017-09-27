@@ -27,7 +27,7 @@ createHeader = function (type, messageLength) {
  * Creates a WebSocket connection to the Game Recorder Server
  */
 function createGameRecorderSocket() {
-    gameRecorderSocket = new WebSocket("wss://techsols.homeip.net:2827"); // 2827 is the port game recorder runs on
+    gameRecorderSocket = new WebSocket("ws://techsols.homeip.net:2827"); // 2827 is the port game recorder runs on
     gameRecorderSocket.binaryType = 'arraybuffer';
 
     gameRecorderSocket.onerror = function (event) {
